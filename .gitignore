@@ -1,0 +1,9 @@
+smart-tour-web/node_modules/
+smart-tour-web/.next/
+smart-tour-web/dist/
+smart-tour-web/build/
+smart-tour-web/coverage/
+smart-tour-web/*.log
+smart-tour-web/.DS_Store
+smart-tour-web/.env
+smart-tour-web/.env.*.local
