@@ -1,0 +1,27 @@
+HƯỚNG DẪN CẤU HÌNH APPLICATION.PROPERTIES
+==========================================
+
+Mở file: backend/src/main/resources/application.properties
+
+Nếu MySQL CÓ PASSWORD:
+-----------------------
+Sửa dòng 8 từ:
+    spring.datasource.password=
+
+Thành:
+    spring.datasource.password=your_mysql_password
+
+Ví dụ nếu password là "123456":
+    spring.datasource.password=123456
+
+
+Nếu MySQL KHÔNG CÓ PASSWORD:
+----------------------------
+Giữ nguyên:
+    spring.datasource.password=
+
+
+LƯU Ý:
+-------
+- Nếu dùng XAMPP mặc định thì password để trống
+- Nếu cài MySQL riêng thì thường có password (đã đặt khi cài)
