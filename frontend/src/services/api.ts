@@ -2,12 +2,14 @@ import axios from 'axios';
 import { 
   Tour, 
   Booking, 
+  Category,
   Review, 
   AuthResponse, 
   LoginRequest, 
   RegisterRequest, 
   BookingRequest,
-  TourSearchFilters 
+  TourSearchFilters,
+  TourCreateRequest 
 } from '../types';
 
 const API_BASE_URL = 'http://localhost:8080/api';
@@ -22,7 +24,7 @@ const api = axios.create({
 // Request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -38,7 +40,8 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('accessToken');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
       window.location.href = '/login';
     }
     return Promise.reject(error);
@@ -62,29 +65,30 @@ export const toursAPI = {
   getById: (id: number): Promise<Tour> =>
     api.get(`/tours/${id}`).then(res => res.data),
   
-  search: (filters: TourSearchFilters): Promise<Tour[]> =>
-    api.get('/tours/search', { params: filters }).then(res => res.data),
+  search: (filters: TourSearchFilters): Promise<Tour[]> => {
+    const params = new URLSearchParams();
+    if (filters.destination) params.append('destination', filters.destination);
+    if (filters.categoryId) params.append('categoryId', filters.categoryId.toString());
+    if (filters.minPrice) params.append('minPrice', filters.minPrice.toString());
+    if (filters.maxPrice) params.append('maxPrice', filters.maxPrice.toString());
+    if (filters.status) params.append('status', filters.status);
+    return api.get(`/tours/search?${params.toString()}`).then(res => res.data);
+  },
   
-  getUpcoming: (): Promise<Tour[]> =>
-    api.get('/tours/upcoming').then(res => res.data),
+  getAvailable: (): Promise<Tour[]> =>
+    api.get('/tours/available').then(res => res.data),
   
-  getOpenRegistration: (): Promise<Tour[]> =>
-    api.get('/tours/open-registration').then(res => res.data),
+  getByCategory: (categoryId: number): Promise<Tour[]> =>
+    api.get(`/tours/category/${categoryId}`).then(res => res.data),
   
-  getByDestination: (destination: string): Promise<Tour[]> =>
-    api.get(`/tours/destination/${destination}`).then(res => res.data),
+  create: (data: TourCreateRequest): Promise<Tour> =>
+    api.post('/tours', data).then(res => res.data),
   
-  getByType: (tourType: string): Promise<Tour[]> =>
-    api.get(`/tours/type/${tourType}`).then(res => res.data),
+  update: (id: number, data: Partial<TourCreateRequest>): Promise<Tour> =>
+    api.put(`/tours/${id}`, data).then(res => res.data),
   
-  getByDifficulty: (difficultyLevel: string): Promise<Tour[]> =>
-    api.get(`/tours/difficulty/${difficultyLevel}`).then(res => res.data),
-  
-  getByPriceRange: (minPrice: number, maxPrice: number): Promise<Tour[]> =>
-    api.get('/tours/price-range', { params: { minPrice, maxPrice } }).then(res => res.data),
-  
-  getByDurationRange: (minDuration: number, maxDuration: number): Promise<Tour[]> =>
-    api.get('/tours/duration-range', { params: { minDuration, maxDuration } }).then(res => res.data),
+  delete: (id: number): Promise<void> =>
+    api.delete(`/tours/${id}`).then(res => res.data),
 };
 
 // Bookings API
@@ -92,26 +96,44 @@ export const bookingsAPI = {
   create: (data: BookingRequest): Promise<Booking> =>
     api.post('/bookings', data).then(res => res.data),
   
-  getUserBookings: (): Promise<Booking[]> =>
+  getAll: (): Promise<Booking[]> =>
     api.get('/bookings').then(res => res.data),
+  
+  getMyBookings: (): Promise<Booking[]> =>
+    api.get('/bookings/my').then(res => res.data),
   
   getById: (id: number): Promise<Booking> =>
     api.get(`/bookings/${id}`).then(res => res.data),
   
-  confirm: (id: number): Promise<Booking> =>
-    api.put(`/bookings/${id}/confirm`).then(res => res.data),
+  updateStatus: (id: number, status: string): Promise<Booking> =>
+    api.put(`/bookings/${id}/status`, { status }).then(res => res.data),
   
   cancel: (id: number): Promise<Booking> =>
     api.put(`/bookings/${id}/cancel`).then(res => res.data),
-  
-  complete: (id: number): Promise<Booking> =>
-    api.put(`/bookings/${id}/complete`).then(res => res.data),
   
   delete: (id: number): Promise<void> =>
     api.delete(`/bookings/${id}`).then(res => res.data),
 };
 
-// Reviews API
+// Categories API
+export const categoriesAPI = {
+  getAll: (): Promise<Category[]> =>
+    api.get('/categories').then(res => res.data),
+  
+  getById: (id: number): Promise<Category> =>
+    api.get(`/categories/${id}`).then(res => res.data),
+  
+  create: (data: { name: string; description?: string }): Promise<Category> =>
+    api.post('/categories', data).then(res => res.data),
+  
+  update: (id: number, data: { name: string; description?: string }): Promise<Category> =>
+    api.put(`/categories/${id}`, data).then(res => res.data),
+  
+  delete: (id: number): Promise<void> =>
+    api.delete(`/categories/${id}`).then(res => res.data),
+};
+
+// Reviews API (for future use)
 export const reviewsAPI = {
   getByTour: (tourId: number): Promise<Review[]> =>
     api.get(`/reviews/tour/${tourId}`).then(res => res.data),

@@ -1,28 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { 
-  MapPinIcon, 
-  ClockIcon, 
-  UsersIcon, 
-  StarIcon,
   MagnifyingGlassIcon,
   FunnelIcon
 } from '@heroicons/react/24/outline';
-import { toursAPI } from '../services/api';
-import { Tour, TourSearchFilters } from '../types';
+import { toursAPI, categoriesAPI } from '../services/api';
+import { TourSearchFilters } from '../types';
+import TourCard from '../components/TourCard';
+import LoadingSpinner from '../components/LoadingSpinner';
+import ErrorMessage from '../components/ErrorMessage';
 
 const ToursPage: React.FC = () => {
   const [filters, setFilters] = useState<TourSearchFilters>({});
   const [showFilters, setShowFilters] = useState(false);
 
-  const { data: tours, isLoading, error } = useQuery(
+  const { data: tours, isLoading, error, refetch } = useQuery(
     ['tours', filters],
-    () => toursAPI.search(filters),
+    () => {
+      // If no filters, get all tours
+      if (Object.keys(filters).length === 0 || !Object.values(filters).some(v => v)) {
+        return toursAPI.getAll();
+      }
+      return toursAPI.search(filters);
+    },
     {
       initialData: []
     }
   );
+
+  const { data: categories } = useQuery('categories', categoriesAPI.getAll, {
+    initialData: []
+  });
 
   const handleFilterChange = (key: keyof TourSearchFilters, value: string | number | undefined) => {
     setFilters(prev => ({
@@ -36,39 +44,17 @@ const ToursPage: React.FC = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-300 rounded w-1/4 mb-8"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-white rounded-xl shadow-lg overflow-hidden">
-                  <div className="h-48 bg-gray-300"></div>
-                  <div className="p-6">
-                    <div className="h-6 bg-gray-300 rounded mb-2"></div>
-                    <div className="h-4 bg-gray-300 rounded mb-4"></div>
-                    <div className="h-4 bg-gray-300 rounded w-1/2"></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner fullScreen text="Loading tours..." />;
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Error Loading Tours</h2>
-            <p className="text-gray-600">Please try again later.</p>
-          </div>
-        </div>
-      </div>
+      <ErrorMessage
+        fullScreen
+        title="Error Loading Tours"
+        message="Unable to load tours. Please try again later."
+        onRetry={() => refetch()}
+      />
     );
   }
 
@@ -114,48 +100,43 @@ const ToursPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Tour Type
+                    Category
                   </label>
                   <select
-                    className="input-field"
-                    value={filters.tourType || ''}
-                    onChange={(e) => handleFilterChange('tourType', e.target.value || undefined)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    value={filters.categoryId || ''}
+                    onChange={(e) => handleFilterChange('categoryId', e.target.value ? Number(e.target.value) : undefined)}
                   >
-                    <option value="">All Types</option>
-                    <option value="ADVENTURE">Adventure</option>
-                    <option value="CULTURAL">Cultural</option>
-                    <option value="RELAXATION">Relaxation</option>
-                    <option value="BUSINESS">Business</option>
-                    <option value="FAMILY">Family</option>
-                    <option value="SOLO">Solo</option>
-                    <option value="GROUP">Group</option>
+                    <option value="">All Categories</option>
+                    {categories?.map(cat => (
+                      <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    ))}
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Difficulty
+                    Status
                   </label>
                   <select
-                    className="input-field"
-                    value={filters.difficultyLevel || ''}
-                    onChange={(e) => handleFilterChange('difficultyLevel', e.target.value || undefined)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    value={filters.status || ''}
+                    onChange={(e) => handleFilterChange('status', e.target.value || undefined)}
                   >
-                    <option value="">All Levels</option>
-                    <option value="EASY">Easy</option>
-                    <option value="MODERATE">Moderate</option>
-                    <option value="HARD">Hard</option>
-                    <option value="EXPERT">Expert</option>
+                    <option value="">All Status</option>
+                    <option value="AVAILABLE">Available</option>
+                    <option value="FULL">Full</option>
+                    <option value="COMPLETED">Completed</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Min Price ($)
+                    Min Price (VND)
                   </label>
                   <input
                     type="number"
-                    className="input-field"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     placeholder="0"
                     value={filters.minPrice || ''}
                     onChange={(e) => handleFilterChange('minPrice', e.target.value ? Number(e.target.value) : undefined)}
@@ -164,12 +145,12 @@ const ToursPage: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Max Price ($)
+                    Max Price (VND)
                   </label>
                   <input
                     type="number"
-                    className="input-field"
-                    placeholder="10000"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="10000000"
                     value={filters.maxPrice || ''}
                     onChange={(e) => handleFilterChange('maxPrice', e.target.value ? Number(e.target.value) : undefined)}
                   />
@@ -199,63 +180,7 @@ const ToursPage: React.FC = () => {
         {tours && tours.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {tours.map((tour) => (
-              <div key={tour.id} className="card group hover:shadow-xl transition-shadow duration-300">
-                <div className="relative overflow-hidden">
-                  <img 
-                    src={`https://images.unsplash.com/photo-${1500000000000 + tour.id}?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80`}
-                    alt={tour.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 right-4 bg-white px-3 py-1 rounded-full text-sm font-medium text-gray-900">
-                    {tour.tourType}
-                  </div>
-                  <div className="absolute top-4 left-4 bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    ${tour.price}
-                  </div>
-                </div>
-                
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
-                    {tour.title}
-                  </h3>
-                  
-                  <div className="flex items-center text-gray-600 mb-2">
-                    <MapPinIcon className="h-4 w-4 mr-1" />
-                    <span className="text-sm">{tour.destination}</span>
-                  </div>
-                  
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                    {tour.description}
-                  </p>
-                  
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center text-gray-600">
-                      <ClockIcon className="h-4 w-4 mr-1" />
-                      <span className="text-sm">{tour.duration} days</span>
-                    </div>
-                    <div className="flex items-center text-gray-600">
-                      <UsersIcon className="h-4 w-4 mr-1" />
-                      <span className="text-sm">{tour.maxParticipants} max</span>
-                    </div>
-                    <div className="flex items-center">
-                      <StarIcon className="h-4 w-4 text-yellow-400 mr-1" />
-                      <span className="text-sm font-medium">4.8</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-primary-600">
-                      ${tour.price}
-                    </span>
-                    <Link 
-                      to={`/tours/${tour.id}`}
-                      className="btn-primary text-sm"
-                    >
-                      View Details
-                    </Link>
-                  </div>
-                </div>
-              </div>
+              <TourCard key={tour.id} tour={tour} />
             ))}
           </div>
         ) : (

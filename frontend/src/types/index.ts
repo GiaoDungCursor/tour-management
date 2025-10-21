@@ -1,78 +1,73 @@
+// User related types
 export interface User {
   id: number;
   username: string;
   email: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber?: string;
-  role: 'USER' | 'ADMIN' | 'GUIDE';
+  fullName: string;
+  phone?: string;
+  address?: string;
+  role: 'ADMIN' | 'STAFF' | 'CUSTOMER';
+  active: boolean;
   createdAt: string;
   updatedAt: string;
-  isActive: boolean;
 }
 
+// Category types
+export interface Category {
+  id: number;
+  name: string;
+  description?: string;
+}
+
+// Tour related types
 export interface Tour {
   id: number;
-  title: string;
-  description: string;
+  name: string;
+  description?: string;
   destination: string;
+  duration: number; // số ngày
   price: number;
-  duration: number; // in days
   maxParticipants: number;
-  minParticipants: number;
-  tourType: 'ADVENTURE' | 'CULTURAL' | 'RELAXATION' | 'BUSINESS' | 'FAMILY' | 'SOLO' | 'GROUP';
-  difficultyLevel: 'EASY' | 'MODERATE' | 'HARD' | 'EXPERT';
-  startDate?: string;
-  endDate?: string;
-  registrationDeadline?: string;
-  isActive: boolean;
+  availableSeats: number;
+  startDate: string;
+  endDate: string;
+  imageUrl?: string;
+  status: 'AVAILABLE' | 'FULL' | 'CANCELLED' | 'COMPLETED';
+  itinerary?: string; // lịch trình chi tiết (text)
+  included?: string; // bao gồm (text)
+  excluded?: string; // không bao gồm (text)
   createdAt: string;
   updatedAt: string;
-  images?: TourImage[];
-  itineraries?: Itinerary[];
-  guide?: User;
+  category?: Category;
 }
 
-export interface TourImage {
-  id: number;
-  tourId: number;
-  imageUrl: string;
-  altText: string;
-  isMain: boolean;
-  sortOrder: number;
-}
-
-export interface Itinerary {
-  id: number;
-  tourId: number;
-  dayNumber: number;
-  title: string;
-  description: string;
-  location?: string;
-  activities?: string;
-  meals?: string;
-  accommodation?: string;
-  startTime?: string;
-  endTime?: string;
-}
-
+// Booking related types
 export interface Booking {
   id: number;
-  userId: number;
-  tourId: number;
-  numberOfParticipants: number;
-  totalPrice: number;
-  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'REFUNDED';
-  bookingDate: string;
+  tour?: Tour;
+  customer?: User;
+  numberOfPeople: number;
+  totalAmount: number;
+  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
+  paymentStatus: 'UNPAID' | 'PARTIAL' | 'PAID' | 'REFUNDED';
+  specialRequests?: string;
   createdAt: string;
   updatedAt: string;
-  specialRequests?: string;
-  emergencyContact?: string;
-  emergencyPhone?: string;
-  user?: User;
-  tour?: Tour;
+  payment?: Payment;
 }
 
+// Payment types
+export interface Payment {
+  id: number;
+  bookingId: number;
+  amount: number;
+  paymentMethod: 'CASH' | 'CREDIT_CARD' | 'DEBIT_CARD' | 'BANK_TRANSFER' | 'E_WALLET';
+  status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'REFUNDED';
+  transactionId?: string;
+  paymentDate: string;
+}
+
+// Review types (for future use)
 export interface Review {
   id: number;
   userId: number;
@@ -100,25 +95,41 @@ export interface RegisterRequest {
   username: string;
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber?: string;
+  fullName: string;
+  phone?: string;
+  address?: string;
 }
 
 export interface BookingRequest {
   tourId: number;
-  numberOfParticipants: number;
+  numberOfPeople: number;
   specialRequests?: string;
-  emergencyContact?: string;
-  emergencyPhone?: string;
 }
 
 export interface TourSearchFilters {
   destination?: string;
-  tourType?: string;
-  difficultyLevel?: string;
+  categoryId?: number;
   minPrice?: number;
   maxPrice?: number;
-  minDuration?: number;
-  maxDuration?: number;
+  startDate?: string;
+  endDate?: string;
+  status?: 'AVAILABLE' | 'FULL' | 'CANCELLED' | 'COMPLETED';
+}
+
+// For tour creation/update (admin)
+export interface TourCreateRequest {
+  name: string;
+  description?: string;
+  destination: string;
+  duration: number;
+  price: number;
+  maxParticipants: number;
+  availableSeats: number;
+  startDate: string;
+  endDate: string;
+  imageUrl?: string;
+  itinerary?: string;
+  included?: string;
+  excluded?: string;
+  categoryId?: number;
 }

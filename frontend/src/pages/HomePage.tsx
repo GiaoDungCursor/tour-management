@@ -1,47 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from 'react-query';
 import { 
   MapPinIcon, 
   ClockIcon, 
   UsersIcon, 
   StarIcon,
-  ArrowRightIcon,
-  CheckCircleIcon
+  ArrowRightIcon
 } from '@heroicons/react/24/outline';
+import { toursAPI } from '../services/api';
+import TourCard from '../components/TourCard';
 
 const HomePage: React.FC = () => {
-  const featuredTours = [
-    {
-      id: 1,
-      title: "Mystical Bali Adventure",
-      destination: "Bali, Indonesia",
-      duration: 7,
-      price: 899,
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      type: "Adventure"
-    },
-    {
-      id: 2,
-      title: "Cultural Heritage of Japan",
-      destination: "Tokyo, Japan",
-      duration: 10,
-      price: 1299,
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      type: "Cultural"
-    },
-    {
-      id: 3,
-      title: "Relaxing Maldives Retreat",
-      destination: "Maldives",
-      duration: 5,
-      price: 1599,
-      rating: 4.7,
-      image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      type: "Relaxation"
-    }
-  ];
+  // Fetch available tours
+  const { data: allTours } = useQuery('available-tours', toursAPI.getAvailable, {
+    initialData: []
+  });
+
+  // Get featured tours (first 3 available tours)
+  const featuredTours = allTours?.slice(0, 3) || [];
 
   const features = [
     {
@@ -136,50 +113,13 @@ const HomePage: React.FC = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredTours.map((tour) => (
-              <div key={tour.id} className="card group hover:shadow-xl transition-shadow duration-300">
-                <div className="relative overflow-hidden">
-                  <img 
-                    src={tour.image} 
-                    alt={tour.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 right-4 bg-white px-3 py-1 rounded-full text-sm font-medium text-gray-900">
-                    {tour.type}
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    {tour.title}
-                  </h3>
-                  <div className="flex items-center text-gray-600 mb-2">
-                    <MapPinIcon className="h-4 w-4 mr-1" />
-                    <span className="text-sm">{tour.destination}</span>
-                  </div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center text-gray-600">
-                      <ClockIcon className="h-4 w-4 mr-1" />
-                      <span className="text-sm">{tour.duration} days</span>
-                    </div>
-                    <div className="flex items-center">
-                      <StarIcon className="h-4 w-4 text-yellow-400 mr-1" />
-                      <span className="text-sm font-medium">{tour.rating}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-primary-600">
-                      ${tour.price}
-                    </span>
-                    <Link 
-                      to={`/tours/${tour.id}`}
-                      className="btn-primary text-sm"
-                    >
-                      View Details
-                    </Link>
-                  </div>
-                </div>
+            {featuredTours.length > 0 ? (
+              featuredTours.map((tour) => <TourCard key={tour.id} tour={tour} />)
+            ) : (
+              <div className="col-span-3 text-center py-12 text-gray-500">
+                <p>No tours available at the moment. Please check back later!</p>
               </div>
-            ))}
+            )}
           </div>
           
           <div className="text-center mt-12">
