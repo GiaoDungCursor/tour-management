@@ -12,6 +12,7 @@ import { formatCurrency, formatDate } from '../../utils/format';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ErrorMessage from '../../components/ErrorMessage';
 import ConfirmDialog from '../../components/ConfirmDialog';
+import FileUpload from '../../components/FileUpload';
 import toast from 'react-hot-toast';
 
 const Tours: React.FC = () => {

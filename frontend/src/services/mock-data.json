@@ -1,0 +1,602 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "lastUpdated": "2024-12-20T10:00:00Z",
+    "description": "Mock data for Smart Tour Management System",
+    "totalRecords": {
+      "users": 3,
+      "categories": 5,
+      "tours": 8,
+      "bookings": 5,
+      "payments": 5
+    }
+  },
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "email": "admin@tourism.com",
+      "password": "$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDi",
+      "fullName": "Administrator",
+      "role": "ADMIN",
+      "active": true,
+      "phone": "0123456789",
+      "address": "123 Admin Street, Ho Chi Minh City",
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-12-20T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "username": "staff1",
+      "email": "staff@tourism.com",
+      "password": "$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDi",
+      "fullName": "Staff Member",
+      "role": "STAFF",
+      "active": true,
+      "phone": "0987654321",
+      "address": "456 Staff Avenue, Ho Chi Minh City",
+      "createdAt": "2024-01-15T00:00:00Z",
+      "updatedAt": "2024-12-20T10:00:00Z"
+    },
+    {
+      "id": 3,
+      "username": "customer1",
+      "email": "customer@example.com",
+      "password": "$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDi",
+      "fullName": "John Doe",
+      "role": "CUSTOMER",
+      "active": true,
+      "phone": "0369258147",
+      "address": "789 Customer Road, Hanoi",
+      "createdAt": "2024-02-01T00:00:00Z",
+      "updatedAt": "2024-12-20T10:00:00Z"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Du lịch biển",
+      "description": "Tours biển đảo với những bãi biển tuyệt đẹp",
+      "imageUrl": "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400",
+      "active": true,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-12-20T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "name": "Du lịch núi",
+      "description": "Khám phá các vùng núi non hùng vĩ",
+      "imageUrl": "https://images.unsplash.com/photo-1583417267826-aebc4d1542e1?w=400",
+      "active": true,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-12-20T10:00:00Z"
+    },
+    {
+      "id": 3,
+      "name": "Du lịch thành phố",
+      "description": "Tham quan các thành phố lớn",
+      "imageUrl": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400",
+      "active": true,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-12-20T10:00:00Z"
+    },
+    {
+      "id": 4,
+      "name": "Du lịch văn hóa",
+      "description": "Khám phá di sản văn hóa",
+      "imageUrl": "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400",
+      "active": true,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-12-20T10:00:00Z"
+    },
+    {
+      "id": 5,
+      "name": "Du lịch sinh thái",
+      "description": "Tour du lịch sinh thái và thiên nhiên",
+      "imageUrl": "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=400",
+      "active": true,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-12-20T10:00:00Z"
+    }
+  ],
+  "tours": [
+    {
+      "id": 1,
+      "name": "Tour Phú Quốc 3N2Đ",
+      "description": "Khám phá đảo ngọc Phú Quốc với bãi biển tuyệt đẹp và những trải nghiệm độc đáo. Thưởng thức hải sản tươi ngon và tắm biển tại những bãi biển đẹp nhất Việt Nam.",
+      "destination": "Phú Quốc, Kiên Giang",
+      "duration": 3,
+      "price": 4500000,
+      "maxParticipants": 20,
+      "availableSeats": 18,
+      "startDate": "2025-01-15",
+      "endDate": "2025-01-17",
+      "imageUrl": "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800",
+      "status": "AVAILABLE",
+      "itinerary": "Ngày 1: Đón khách tại sân bay, check-in resort, tham quan chợ đêm Phú Quốc\nNgày 2: Tham quan Vinpearl Safari, tắm biển Bãi Trường\nNgày 3: Tham quan nhà tù Phú Quốc, mua sắm, về lại TP.HCM",
+      "included": "Vé máy bay khứ hồi\nKhách sạn 3 sao\nĂn sáng\nHướng dẫn viên\nXe đưa đón\nBảo hiểm du lịch",
+      "excluded": "Ăn trưa, tối\nChi phí cá nhân\nĐồ uống\nPhí tham quan tự chọn",
+      "categoryId": 1,
+      "category": {
+        "id": 1,
+        "name": "Du lịch biển",
+        "description": "Tours biển đảo với những bãi biển tuyệt đẹp"
+      },
+      "rating": 4.8,
+      "reviewCount": 156,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-12-20T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "name": "Tour Đà Lạt 4N3Đ",
+      "description": "Thành phố ngàn hoa với khí hậu mát mẻ quanh năm và cảnh quan thiên nhiên tuyệt đẹp. Khám phá những địa điểm nổi tiếng và thưởng thức đặc sản địa phương.",
+      "destination": "Đà Lạt, Lâm Đồng",
+      "duration": 4,
+      "price": 3200000,
+      "maxParticipants": 25,
+      "availableSeats": 22,
+      "startDate": "2025-01-20",
+      "endDate": "2025-01-23",
+      "imageUrl": "https://images.unsplash.com/photo-1583417267826-aebc4d1542e1?w=800",
+      "status": "AVAILABLE",
+      "itinerary": "Ngày 1: Đón khách tại sân bay, check-in khách sạn, tham quan chợ Đà Lạt\nNgày 2: Tham quan Hồ Xuân Hương, Dinh Bảo Đại, Thiền viện Trúc Lâm\nNgày 3: Tham quan Thung lũng Tình yêu, Ga Đà Lạt, Vườn hoa\nNgày 4: Mua sắm đặc sản, về lại TP.HCM",
+      "included": "Vé máy bay khứ hồi\nKhách sạn 3 sao\nĂn sáng\nHướng dẫn viên\nXe đưa đón\nBảo hiểm du lịch",
+      "excluded": "Ăn trưa, tối\nChi phí cá nhân\nĐồ uống\nPhí tham quan tự chọn",
+      "categoryId": 2,
+      "category": {
+        "id": 2,
+        "name": "Du lịch núi",
+        "description": "Khám phá các vùng núi non hùng vĩ"
+      },
+      "rating": 4.6,
+      "reviewCount": 89,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-12-20T10:00:00Z"
+    },
+    {
+      "id": 3,
+      "name": "Tour Hạ Long 2N1Đ",
+      "description": "Di sản thiên nhiên thế giới Vịnh Hạ Long với hàng nghìn đảo đá vôi tuyệt đẹp. Trải nghiệm du thuyền sang trọng và khám phá những hang động kỳ bí.",
+      "destination": "Hạ Long, Quảng Ninh",
+      "duration": 2,
+      "price": 2800000,
+      "maxParticipants": 30,
+      "availableSeats": 25,
+      "startDate": "2025-01-10",
+      "endDate": "2025-01-11",
+      "imageUrl": "https://images.unsplash.com/photo-1528127269322-539801943592?w=800",
+      "status": "AVAILABLE",
+      "itinerary": "Ngày 1: Đón khách tại Hà Nội, di chuyển đến Hạ Long, lên tàu cruise, tham quan hang Sửng Sốt\nNgày 2: Tham quan hang Luồn, đảo Titop, về lại Hà Nội",
+      "included": "Vé tàu cruise\nPhòng nghỉ trên tàu\nĂn uống trên tàu\nHướng dẫn viên\nXe đưa đón\nBảo hiểm du lịch",
+      "excluded": "Chi phí cá nhân\nĐồ uống có cồn\nPhí tham quan tự chọn",
+      "categoryId": 4,
+      "category": {
+        "id": 4,
+        "name": "Du lịch văn hóa",
+        "description": "Khám phá di sản văn hóa"
+      },
+      "rating": 4.9,
+      "reviewCount": 234,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-12-20T10:00:00Z"
+    },
+    {
+      "id": 4,
+      "name": "Tour Sapa 3N2Đ",
+      "description": "Khám phá vùng núi Tây Bắc và ruộng bậc thang tuyệt đẹp cùng văn hóa dân tộc. Trekking qua những con đường mòn và gặp gỡ người dân địa phương.",
+      "destination": "Sapa, Lào Cai",
+      "duration": 3,
+      "price": 3500000,
+      "maxParticipants": 20,
+      "availableSeats": 15,
+      "startDate": "2025-01-25",
+      "endDate": "2025-01-27",
+      "imageUrl": "https://images.unsplash.com/photo-1583417267826-aebc4d1542e1?w=800",
+      "status": "AVAILABLE",
+      "itinerary": "Ngày 1: Đón khách tại Hà Nội, di chuyển đến Sapa, check-in homestay\nNgày 2: Trekking ruộng bậc thang, tham quan làng Cát Cát\nNgày 3: Tham quan chợ Sapa, về lại Hà Nội",
+      "included": "Homestay\nĂn uống\nHướng dẫn viên\nXe đưa đón\nBảo hiểm du lịch",
+      "excluded": "Chi phí cá nhân\nĐồ uống\nPhí tham quan tự chọn",
+      "categoryId": 2,
+      "category": {
+        "id": 2,
+        "name": "Du lịch núi",
+        "description": "Khám phá các vùng núi non hùng vĩ"
+      },
+      "rating": 4.7,
+      "reviewCount": 112,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-12-20T10:00:00Z"
+    },
+    {
+      "id": 5,
+      "name": "Tour Nha Trang 3N2Đ",
+      "description": "Thành phố biển Nha Trang xinh đẹp với những bãi biển trong xanh. Thưởng thức hải sản tươi ngon và tham gia các hoạt động thể thao dưới nước.",
+      "destination": "Nha Trang, Khánh Hòa",
+      "duration": 3,
+      "price": 3800000,
+      "maxParticipants": 25,
+      "availableSeats": 20,
+      "startDate": "2025-02-01",
+      "endDate": "2025-02-03",
+      "imageUrl": "https://images.unsplash.com/photo-1583417267826-aebc4d1542e1?w=800",
+      "status": "AVAILABLE",
+      "itinerary": "Ngày 1: Đón khách tại sân bay, check-in resort, tham quan chợ Đầm\nNgày 2: Tham quan đảo Hòn Mun, Vinpearl Land\nNgày 3: Tắm biển, mua sắm, về lại TP.HCM",
+      "included": "Vé máy bay khứ hồi\nResort 4 sao\nĂn sáng\nHướng dẫn viên\nXe đưa đón\nBảo hiểm du lịch",
+      "excluded": "Ăn trưa, tối\nChi phí cá nhân\nĐồ uống\nPhí tham quan tự chọn",
+      "categoryId": 1,
+      "category": {
+        "id": 1,
+        "name": "Du lịch biển",
+        "description": "Tours biển đảo với những bãi biển tuyệt đẹp"
+      },
+      "rating": 4.5,
+      "reviewCount": 78,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-12-20T10:00:00Z"
+    },
+    {
+      "id": 6,
+      "name": "Tour Hội An 2N1Đ",
+      "description": "Phố cổ Hội An với kiến trúc cổ kính và ẩm thực đặc sắc. Khám phá những ngôi nhà cổ và thưởng thức các món ăn truyền thống.",
+      "destination": "Hội An, Quảng Nam",
+      "duration": 2,
+      "price": 2500000,
+      "maxParticipants": 30,
+      "availableSeats": 28,
+      "startDate": "2025-02-10",
+      "endDate": "2025-02-11",
+      "imageUrl": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
+      "status": "AVAILABLE",
+      "itinerary": "Ngày 1: Đón khách tại Đà Nẵng, di chuyển đến Hội An, tham quan phố cổ\nNgày 2: Tham quan làng gốm Thanh Hà, về lại Đà Nẵng",
+      "included": "Khách sạn 3 sao\nĂn sáng\nHướng dẫn viên\nXe đưa đón\nBảo hiểm du lịch",
+      "excluded": "Ăn trưa, tối\nChi phí cá nhân\nĐồ uống\nPhí tham quan tự chọn",
+      "categoryId": 4,
+      "category": {
+        "id": 4,
+        "name": "Du lịch văn hóa",
+        "description": "Khám phá di sản văn hóa"
+      },
+      "rating": 4.8,
+      "reviewCount": 145,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-12-20T10:00:00Z"
+    },
+    {
+      "id": 7,
+      "name": "Tour Cần Thơ 2N1Đ",
+      "description": "Miền Tây sông nước với chợ nổi và văn hóa đặc trưng. Trải nghiệm cuộc sống miền Tây và thưởng thức các món ăn đặc sản.",
+      "destination": "Cần Thơ",
+      "duration": 2,
+      "price": 2200000,
+      "maxParticipants": 25,
+      "availableSeats": 23,
+      "startDate": "2025-02-15",
+      "endDate": "2025-02-16",
+      "imageUrl": "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=800",
+      "status": "AVAILABLE",
+      "itinerary": "Ngày 1: Đón khách tại TP.HCM, di chuyển đến Cần Thơ, tham quan chợ nổi Cái Răng\nNgày 2: Tham quan vườn trái cây, về lại TP.HCM",
+      "included": "Khách sạn 3 sao\nĂn sáng\nHướng dẫn viên\nXe đưa đón\nBảo hiểm du lịch",
+      "excluded": "Ăn trưa, tối\nChi phí cá nhân\nĐồ uống\nPhí tham quan tự chọn",
+      "categoryId": 5,
+      "category": {
+        "id": 5,
+        "name": "Du lịch sinh thái",
+        "description": "Tour du lịch sinh thái và thiên nhiên"
+      },
+      "rating": 4.4,
+      "reviewCount": 67,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-12-20T10:00:00Z"
+    },
+    {
+      "id": 8,
+      "name": "Tour Huế 3N2Đ",
+      "description": "Cố đô Huế với di sản văn hóa và ẩm thực cung đình. Khám phá những cung điện cổ kính và thưởng thức các món ăn cung đình.",
+      "destination": "Huế, Thừa Thiên Huế",
+      "duration": 3,
+      "price": 3000000,
+      "maxParticipants": 20,
+      "availableSeats": 18,
+      "startDate": "2025-02-20",
+      "endDate": "2025-02-22",
+      "imageUrl": "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800",
+      "status": "AVAILABLE",
+      "itinerary": "Ngày 1: Đón khách tại Huế, check-in khách sạn, tham quan Đại Nội\nNgày 2: Tham quan lăng Khải Định, chùa Thiên Mụ\nNgày 3: Tham quan chợ Đông Ba, về lại TP.HCM",
+      "included": "Khách sạn 3 sao\nĂn sáng\nHướng dẫn viên\nXe đưa đón\nBảo hiểm du lịch",
+      "excluded": "Ăn trưa, tối\nChi phí cá nhân\nĐồ uống\nPhí tham quan tự chọn",
+      "categoryId": 4,
+      "category": {
+        "id": 4,
+        "name": "Du lịch văn hóa",
+        "description": "Khám phá di sản văn hóa"
+      },
+      "rating": 4.6,
+      "reviewCount": 98,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-12-20T10:00:00Z"
+    }
+  ],
+  "bookings": [
+    {
+      "id": 1,
+      "customerId": 3,
+      "customer": {
+        "id": 3,
+        "username": "customer1",
+        "email": "customer@example.com",
+        "fullName": "John Doe",
+        "role": "CUSTOMER"
+      },
+      "tourId": 1,
+      "tour": {
+        "id": 1,
+        "name": "Tour Phú Quốc 3N2Đ",
+        "destination": "Phú Quốc, Kiên Giang",
+        "imageUrl": "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800"
+      },
+      "numberOfPeople": 2,
+      "totalAmount": 9000000,
+      "status": "CONFIRMED",
+      "paymentStatus": "PAID",
+      "specialRequests": "Cần phòng đôi, không ăn cay",
+      "createdAt": "2024-12-15T10:30:00Z",
+      "updatedAt": "2024-12-15T10:30:00Z"
+    },
+    {
+      "id": 2,
+      "customerId": 3,
+      "customer": {
+        "id": 3,
+        "username": "customer1",
+        "email": "customer@example.com",
+        "fullName": "John Doe",
+        "role": "CUSTOMER"
+      },
+      "tourId": 2,
+      "tour": {
+        "id": 2,
+        "name": "Tour Đà Lạt 4N3Đ",
+        "destination": "Đà Lạt, Lâm Đồng",
+        "imageUrl": "https://images.unsplash.com/photo-1583417267826-aebc4d1542e1?w=800"
+      },
+      "numberOfPeople": 1,
+      "totalAmount": 3200000,
+      "status": "PENDING",
+      "paymentStatus": "PENDING",
+      "specialRequests": "Cần hướng dẫn viên nói tiếng Anh",
+      "createdAt": "2024-12-16T14:20:00Z",
+      "updatedAt": "2024-12-16T14:20:00Z"
+    },
+    {
+      "id": 3,
+      "customerId": 3,
+      "customer": {
+        "id": 3,
+        "username": "customer1",
+        "email": "customer@example.com",
+        "fullName": "John Doe",
+        "role": "CUSTOMER"
+      },
+      "tourId": 3,
+      "tour": {
+        "id": 3,
+        "name": "Tour Hạ Long 2N1Đ",
+        "destination": "Hạ Long, Quảng Ninh",
+        "imageUrl": "https://images.unsplash.com/photo-1528127269322-539801943592?w=800"
+      },
+      "numberOfPeople": 3,
+      "totalAmount": 8400000,
+      "status": "CONFIRMED",
+      "paymentStatus": "PAID",
+      "specialRequests": "Có trẻ em 5 tuổi",
+      "createdAt": "2024-12-17T09:15:00Z",
+      "updatedAt": "2024-12-17T09:15:00Z"
+    },
+    {
+      "id": 4,
+      "customerId": 3,
+      "customer": {
+        "id": 3,
+        "username": "customer1",
+        "email": "customer@example.com",
+        "fullName": "John Doe",
+        "role": "CUSTOMER"
+      },
+      "tourId": 4,
+      "tour": {
+        "id": 4,
+        "name": "Tour Sapa 3N2Đ",
+        "destination": "Sapa, Lào Cai",
+        "imageUrl": "https://images.unsplash.com/photo-1583417267826-aebc4d1542e1?w=800"
+      },
+      "numberOfPeople": 2,
+      "totalAmount": 7000000,
+      "status": "CANCELLED",
+      "paymentStatus": "REFUNDED",
+      "specialRequests": "Hủy do lý do cá nhân",
+      "createdAt": "2024-12-18T16:45:00Z",
+      "updatedAt": "2024-12-18T16:45:00Z"
+    },
+    {
+      "id": 5,
+      "customerId": 3,
+      "customer": {
+        "id": 3,
+        "username": "customer1",
+        "email": "customer@example.com",
+        "fullName": "John Doe",
+        "role": "CUSTOMER"
+      },
+      "tourId": 5,
+      "tour": {
+        "id": 5,
+        "name": "Tour Nha Trang 3N2Đ",
+        "destination": "Nha Trang, Khánh Hòa",
+        "imageUrl": "https://images.unsplash.com/photo-1583417267826-aebc4d1542e1?w=800"
+      },
+      "numberOfPeople": 1,
+      "totalAmount": 3800000,
+      "status": "CONFIRMED",
+      "paymentStatus": "PAID",
+      "specialRequests": "",
+      "createdAt": "2024-12-19T11:30:00Z",
+      "updatedAt": "2024-12-19T11:30:00Z"
+    }
+  ],
+  "payments": [
+    {
+      "id": 1,
+      "bookingId": 1,
+      "amount": 9000000,
+      "paymentMethod": "BANK_TRANSFER",
+      "paymentStatus": "COMPLETED",
+      "transactionId": "TXN001234567",
+      "gatewayResponse": "Success",
+      "createdAt": "2024-12-15T10:35:00Z"
+    },
+    {
+      "id": 2,
+      "bookingId": 2,
+      "amount": 3200000,
+      "paymentMethod": "CREDIT_CARD",
+      "paymentStatus": "PENDING",
+      "transactionId": "TXN001234568",
+      "gatewayResponse": "Processing",
+      "createdAt": "2024-12-16T14:25:00Z"
+    },
+    {
+      "id": 3,
+      "bookingId": 3,
+      "amount": 8400000,
+      "paymentMethod": "BANK_TRANSFER",
+      "paymentStatus": "COMPLETED",
+      "transactionId": "TXN001234569",
+      "gatewayResponse": "Success",
+      "createdAt": "2024-12-17T09:20:00Z"
+    },
+    {
+      "id": 4,
+      "bookingId": 4,
+      "amount": 7000000,
+      "paymentMethod": "CREDIT_CARD",
+      "paymentStatus": "REFUNDED",
+      "transactionId": "TXN001234570",
+      "gatewayResponse": "Refunded",
+      "createdAt": "2024-12-18T16:50:00Z"
+    },
+    {
+      "id": 5,
+      "bookingId": 5,
+      "amount": 3800000,
+      "paymentMethod": "BANK_TRANSFER",
+      "paymentStatus": "COMPLETED",
+      "transactionId": "TXN001234571",
+      "gatewayResponse": "Success",
+      "createdAt": "2024-12-19T11:35:00Z"
+    }
+  ],
+  "reviews": [
+    {
+      "id": 1,
+      "bookingId": 1,
+      "customerId": 3,
+      "customer": {
+        "id": 3,
+        "username": "customer1",
+        "fullName": "John Doe"
+      },
+      "tourId": 1,
+      "tour": {
+        "id": 1,
+        "name": "Tour Phú Quốc 3N2Đ"
+      },
+      "rating": 5,
+      "comment": "Tour tuyệt vời! Phú Quốc đẹp như mơ, hướng dẫn viên nhiệt tình và chuyên nghiệp. Sẽ quay lại lần nữa!",
+      "createdAt": "2024-12-20T08:00:00Z",
+      "updatedAt": "2024-12-20T08:00:00Z"
+    },
+    {
+      "id": 2,
+      "bookingId": 3,
+      "customerId": 3,
+      "customer": {
+        "id": 3,
+        "username": "customer1",
+        "fullName": "John Doe"
+      },
+      "tourId": 3,
+      "tour": {
+        "id": 3,
+        "name": "Tour Hạ Long 2N1Đ"
+      },
+      "rating": 5,
+      "comment": "Vịnh Hạ Long thật sự là kỳ quan thiên nhiên! Du thuyền sang trọng, đồ ăn ngon. Rất đáng để trải nghiệm.",
+      "createdAt": "2024-12-20T09:00:00Z",
+      "updatedAt": "2024-12-20T09:00:00Z"
+    }
+  ],
+  "analytics": {
+    "dashboard": {
+      "totalTours": 8,
+      "activeTours": 8,
+      "totalBookings": 5,
+      "pendingBookings": 1,
+      "confirmedBookings": 3,
+      "cancelledBookings": 1,
+      "totalRevenue": 26400000,
+      "averageRating": 4.7,
+      "totalReviews": 2
+    },
+    "monthlyStats": [
+      {
+        "month": "2024-12",
+        "bookings": 5,
+        "revenue": 26400000,
+        "tours": 8
+      },
+      {
+        "month": "2024-11",
+        "bookings": 12,
+        "revenue": 45000000,
+        "tours": 6
+      },
+      {
+        "month": "2024-10",
+        "bookings": 8,
+        "revenue": 32000000,
+        "tours": 5
+      }
+    ],
+    "categoryStats": [
+      {
+        "categoryId": 1,
+        "categoryName": "Du lịch biển",
+        "tourCount": 2,
+        "bookingCount": 2,
+        "revenue": 12800000
+      },
+      {
+        "categoryId": 2,
+        "categoryName": "Du lịch núi",
+        "tourCount": 2,
+        "bookingCount": 1,
+        "revenue": 7000000
+      },
+      {
+        "categoryId": 4,
+        "categoryName": "Du lịch văn hóa",
+        "tourCount": 3,
+        "bookingCount": 1,
+        "revenue": 8400000
+      },
+      {
+        "categoryId": 5,
+        "categoryName": "Du lịch sinh thái",
+        "tourCount": 1,
+        "bookingCount": 0,
+        "revenue": 0
+      }
+    ]
+  }
+}

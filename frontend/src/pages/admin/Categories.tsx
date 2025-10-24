@@ -3,40 +3,180 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { categoriesAPI } from '../../services/api';
 import { Category } from '../../types';
+import DataTable from '../../components/DataTable';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ErrorMessage from '../../components/ErrorMessage';
+import Modal from '../../components/Modal';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import toast from 'react-hot-toast';
 
-const Categories: React.FC = () => {
+const AdminCategories: React.FC = () => {
   const queryClient = useQueryClient();
-  const [showModal, setShowModal] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [deletingCategoryId, setDeletingCategoryId] = useState<number | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [formData, setFormData] = useState<Partial<Category>>({});
 
+  // Fetch categories
   const { data: categories, isLoading, error, refetch } = useQuery(
     'admin-categories',
-    categoriesAPI.getAll
+    categoriesAPI.getAll,
+    { initialData: [] }
   );
 
-  const deleteMutation = useMutation(
-    (id: number) => categoriesAPI.delete(id),
+  // Mutations
+  const createCategoryMutation = useMutation(categoriesAPI.create, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('admin-categories');
+      setIsCreateModalOpen(false);
+      setFormData({});
+      toast.success('Category created successfully!');
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Failed to create category');
+    },
+  });
+
+  const updateCategoryMutation = useMutation(
+    ({ id, data }: { id: number; data: { name: string; description?: string } }) => 
+      categoriesAPI.update(id, data),
     {
       onSuccess: () => {
-        toast.success('Category deleted successfully');
         queryClient.invalidateQueries('admin-categories');
-        setDeletingCategoryId(null);
+        setIsEditModalOpen(false);
+        setSelectedCategory(null);
+        setFormData({});
+        toast.success('Category updated successfully!');
       },
-      onError: () => {
-        toast.error('Failed to delete category');
-      }
+      onError: (error: any) => {
+        toast.error(error.message || 'Failed to update category');
+      },
     }
   );
 
-  const handleDelete = () => {
-    if (deletingCategoryId) {
-      deleteMutation.mutate(deletingCategoryId);
+  const deleteCategoryMutation = useMutation(categoriesAPI.delete, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('admin-categories');
+      setIsDeleteModalOpen(false);
+      setSelectedCategory(null);
+      toast.success('Category deleted successfully!');
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Failed to delete category');
+    },
+  });
+
+  // Table columns
+  const columns = [
+    {
+      key: 'name',
+      title: 'Category Name',
+      sortable: true,
+      render: (value: string, record: Category) => (
+        <div className="flex items-center">
+          {record.imageUrl && (
+            <img
+              src={record.imageUrl}
+              alt={value}
+              className="h-10 w-10 rounded-lg object-cover mr-3"
+            />
+          )}
+          <div>
+            <div className="font-medium text-gray-900">{value}</div>
+            <div className="text-sm text-gray-500">{record.description}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'active',
+      title: 'Status',
+      render: (value: boolean) => (
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+          value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+        }`}>
+          {value ? 'Active' : 'Inactive'}
+        </span>
+      ),
+    },
+    {
+      key: 'actions',
+      title: 'Actions',
+      render: (value: any, record: Category) => (
+        <div className="flex space-x-2">
+          <button
+            onClick={() => handleEdit(record)}
+            className="text-indigo-600 hover:text-indigo-900"
+            title="Edit"
+          >
+            <PencilIcon className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => handleDelete(record)}
+            className="text-red-600 hover:text-red-900"
+            title="Delete"
+          >
+            <TrashIcon className="h-4 w-4" />
+          </button>
+        </div>
+      ),
+    },
+  ];
+
+  const handleCreate = () => {
+    setFormData({
+      name: '',
+      description: '',
+      imageUrl: '',
+      active: true,
+    });
+    setIsCreateModalOpen(true);
+  };
+
+  const handleEdit = (category: Category) => {
+    setSelectedCategory(category);
+    setFormData({
+      name: category.name,
+      description: category.description,
+      imageUrl: category.imageUrl,
+      active: category.active,
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleDelete = (category: Category) => {
+    setSelectedCategory(category);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isCreateModalOpen) {
+      createCategoryMutation.mutate({
+        name: formData.name!,
+        description: formData.description,
+      });
+    } else if (isEditModalOpen && selectedCategory) {
+      updateCategoryMutation.mutate({
+        id: selectedCategory.id,
+        data: {
+          name: formData.name!,
+          description: formData.description,
+        },
+      });
     }
+  };
+
+  const handleDeleteConfirm = () => {
+    if (selectedCategory) {
+      deleteCategoryMutation.mutate(selectedCategory.id);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   if (isLoading) {
@@ -48,7 +188,7 @@ const Categories: React.FC = () => {
       <ErrorMessage
         fullScreen
         title="Error Loading Categories"
-        message="Unable to load categories. Please try again."
+        message="Could not load categories data. Please try again."
         onRetry={() => refetch()}
       />
     );
@@ -56,137 +196,44 @@ const Categories: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Categories Management</h1>
-            <p className="text-gray-600">Manage tour categories</p>
-          </div>
-          <button
-            onClick={() => {
-              setEditingCategory(null);
-              setShowModal(true);
-            }}
-            className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium flex items-center transition-colors"
-          >
-            <PlusIcon className="h-5 w-5 mr-2" />
-            Add Category
-          </button>
-        </div>
-
-        {/* Categories Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories && categories.length > 0 ? (
-            categories.map((category) => (
-              <div key={category.id} className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">{category.name}</h3>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => {
-                        setEditingCategory(category);
-                        setShowModal(true);
-                      }}
-                      className="text-primary-600 hover:text-primary-900"
-                    >
-                      <PencilIcon className="h-5 w-5" />
-                    </button>
-                    <button
-                      onClick={() => setDeletingCategoryId(category.id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      <TrashIcon className="h-5 w-5" />
-                    </button>
-                  </div>
-                </div>
-                {category.description && (
-                  <p className="text-gray-600 text-sm">{category.description}</p>
-                )}
-              </div>
-            ))
-          ) : (
-            <div className="col-span-3 text-center py-12 bg-white rounded-xl shadow-sm">
-              <p className="text-gray-500">No categories yet. Create your first category!</p>
+        <div className="mb-8">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Category Management</h1>
+              <p className="mt-2 text-gray-600">Manage tour categories and classifications</p>
             </div>
-          )}
+            <button
+              onClick={handleCreate}
+              className="btn-primary flex items-center space-x-2"
+            >
+              <PlusIcon className="h-5 w-5" />
+              <span>Add New Category</span>
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* Delete Dialog */}
-      <ConfirmDialog
-        isOpen={deletingCategoryId !== null}
-        title="Delete Category"
-        message="Are you sure you want to delete this category? Tours using this category will not be affected."
-        confirmLabel="Delete"
-        cancelLabel="Cancel"
-        onConfirm={handleDelete}
-        onCancel={() => setDeletingCategoryId(null)}
-        type="danger"
-      />
-
-      {/* Add/Edit Modal */}
-      {showModal && (
-        <CategoryModal
-          category={editingCategory}
-          onClose={() => {
-            setShowModal(false);
-            setEditingCategory(null);
-          }}
-          onSuccess={() => {
-            queryClient.invalidateQueries('admin-categories');
-            setShowModal(false);
-            setEditingCategory(null);
-          }}
+        {/* Data Table */}
+        <DataTable
+          data={categories || []}
+          columns={columns}
+          emptyMessage="No categories found. Create your first category!"
+          className="shadow-lg"
         />
-      )}
-    </div>
-  );
-};
 
-// Category Modal
-interface CategoryModalProps {
-  category: Category | null;
-  onClose: () => void;
-  onSuccess: () => void;
-}
-
-const CategoryModal: React.FC<CategoryModalProps> = ({ category, onClose, onSuccess }) => {
-  const [name, setName] = useState(category?.name || '');
-  const [description, setDescription] = useState(category?.description || '');
-
-  const mutation = useMutation(
-    (data: { name: string; description?: string }) => {
-      if (category) {
-        return categoriesAPI.update(category.id, data);
-      }
-      return categoriesAPI.create(data);
-    },
-    {
-      onSuccess: () => {
-        toast.success(category ? 'Category updated' : 'Category created');
-        onSuccess();
-      },
-      onError: (error: any) => {
-        toast.error(error.response?.data?.message || 'Operation failed');
-      }
-    }
-  );
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    mutation.mutate({ name, description: description || undefined });
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl max-w-md w-full">
-        <form onSubmit={handleSubmit}>
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              {category ? 'Edit Category' : 'Add Category'}
-            </h2>
-
+        {/* Create/Edit Modal */}
+        <Modal
+          isOpen={isCreateModalOpen || isEditModalOpen}
+          onClose={() => {
+            setIsCreateModalOpen(false);
+            setIsEditModalOpen(false);
+            setFormData({});
+          }}
+          title={isCreateModalOpen ? 'Create New Category' : 'Edit Category'}
+          size="md"
+        >
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -194,11 +241,11 @@ const CategoryModal: React.FC<CategoryModalProps> = ({ category, onClose, onSucc
                 </label>
                 <input
                   type="text"
+                  name="name"
+                  value={formData.name || ''}
+                  onChange={handleInputChange}
+                  className="input-field w-full"
                   required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
-                  placeholder="e.g., Beach Tours"
                 />
               </div>
 
@@ -207,37 +254,88 @@ const CategoryModal: React.FC<CategoryModalProps> = ({ category, onClose, onSucc
                   Description
                 </label>
                 <textarea
+                  name="description"
+                  value={formData.description || ''}
+                  onChange={handleInputChange}
                   rows={3}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                  className="input-field w-full"
                   placeholder="Brief description of this category..."
                 />
               </div>
-            </div>
-          </div>
 
-          <div className="bg-gray-50 px-6 py-4 flex justify-end space-x-3 rounded-b-xl">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={mutation.isLoading}
-              className="px-6 py-2 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-400 text-white rounded-lg font-medium"
-            >
-              {mutation.isLoading ? 'Saving...' : category ? 'Update' : 'Create'}
-            </button>
-          </div>
-        </form>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Image URL
+                </label>
+                <input
+                  type="url"
+                  name="imageUrl"
+                  value={formData.imageUrl || ''}
+                  onChange={handleInputChange}
+                  className="input-field w-full"
+                  placeholder="https://example.com/image.jpg"
+                />
+              </div>
+
+              {formData.imageUrl && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Preview
+                  </label>
+                  <img
+                    src={formData.imageUrl}
+                    alt="Preview"
+                    className="h-32 w-32 rounded-lg object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end space-x-4 pt-6 border-t">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCreateModalOpen(false);
+                  setIsEditModalOpen(false);
+                  setFormData({});
+                }}
+                className="btn-outline"
+                disabled={createCategoryMutation.isLoading || updateCategoryMutation.isLoading}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn-primary"
+                disabled={createCategoryMutation.isLoading || updateCategoryMutation.isLoading}
+              >
+                {createCategoryMutation.isLoading || updateCategoryMutation.isLoading ? 'Saving...' : 
+                 isCreateModalOpen ? 'Create Category' : 'Update Category'}
+              </button>
+            </div>
+          </form>
+        </Modal>
+
+        {/* Delete Confirmation Modal */}
+        <ConfirmDialog
+          isOpen={isDeleteModalOpen}
+          title="Delete Category"
+          message={`Are you sure you want to delete "${selectedCategory?.name}"? This action cannot be undone and may affect tours in this category.`}
+          confirmLabel="Delete Category"
+          cancelLabel="Cancel"
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => {
+            setIsDeleteModalOpen(false);
+            setSelectedCategory(null);
+          }}
+          type="danger"
+        />
       </div>
     </div>
   );
 };
 
-export default Categories;
-
+export default AdminCategories;

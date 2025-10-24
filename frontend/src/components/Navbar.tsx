@@ -1,39 +1,41 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { 
-  Bars3Icon, 
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import {
+  Bars3Icon,
   XMarkIcon,
-  UserIcon,
   MapPinIcon,
+  MagnifyingGlassIcon,
+  UserIcon,
   TicketIcon,
   Cog6ToothIcon,
-  HomeIcon,
-  MagnifyingGlassIcon,
+  ChatBubbleLeftIcon,
 } from '@heroicons/react/24/outline';
+import NotificationCenter, { useNotifications } from './NotificationCenter';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
 
+  const { notifications, removeNotification, markAsRead, markAllAsRead, clearAll } = useNotifications();
+
+  // Check if user is logged in
   const token = localStorage.getItem('token');
   const userStr = localStorage.getItem('user');
   const user = userStr ? JSON.parse(userStr) : null;
-  const isLoggedIn = !!token;
+  const isLoggedIn = !!token && !!user;
   const isAdmin = user?.role === 'ADMIN' || user?.role === 'STAFF';
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    setIsMenuOpen(false);
-    setIsUserMenuOpen(false);
     navigate('/');
     window.location.reload();
   };
 
   const navItems = [
-    { name: 'Home', path: '/', icon: HomeIcon },
+    { name: 'Home', path: '/', icon: MapPinIcon },
     { name: 'Tours', path: '/tours', icon: MagnifyingGlassIcon },
   ];
 
@@ -76,58 +78,65 @@ const Navbar: React.FC = () => {
               ))}
             </div>
 
+            {/* Notifications */}
+            {isLoggedIn && (
+              <NotificationCenter
+                notifications={notifications}
+                onMarkAsRead={markAsRead}
+                onMarkAllAsRead={markAllAsRead}
+                onRemove={removeNotification}
+                onClearAll={clearAll}
+              />
+            )}
+
             {/* User Menu */}
             {isLoggedIn ? (
               <div className="relative">
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 transition-all"
+                  className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 transition-all duration-200"
                 >
                   <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
                     <UserIcon className="h-5 w-5 text-primary-600" />
                   </div>
-                  <span className="hidden lg:block">{user?.fullName || user?.username}</span>
-                  <div className={`transform transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`}>
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
+                  <span className="hidden lg:block">{user?.fullName}</span>
                 </button>
-                
+
+                {/* User Dropdown */}
                 {isUserMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg py-2 z-50 border border-gray-200">
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                     {/* User Info */}
                     <div className="px-4 py-3 border-b border-gray-200">
                       <div className="text-sm font-medium text-gray-900">{user?.fullName}</div>
                       <div className="text-xs text-gray-500">{user?.email}</div>
-                      <div className="text-xs text-primary-600 font-medium mt-1">
-                        {user?.role === 'ADMIN' ? 'Administrator' : 
-                         user?.role === 'STAFF' ? 'Staff' : 'Customer'}
-                      </div>
                     </div>
-                    
+
                     {/* Customer Menu */}
-                    <div className="py-1">
-                      <Link 
-                        to="/my-bookings" 
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setIsUserMenuOpen(false)}
-                      >
-                        <TicketIcon className="h-4 w-4 mr-3" />
-                        My Bookings
-                      </Link>
-                    </div>
+                    <Link 
+                      to="/my-bookings" 
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      <TicketIcon className="h-4 w-4 mr-3" />
+                      My Bookings
+                    </Link>
+                    <Link 
+                      to="/reviews" 
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      <ChatBubbleLeftIcon className="h-4 w-4 mr-3" />
+                      Write Reviews
+                    </Link>
 
                     {/* Admin Menu */}
                     {isAdmin && (
                       <>
-                        <div className="border-t border-gray-200 my-2"></div>
-                        <div className="px-4 py-2">
-                          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Admin</div>
-                        </div>
+                        <div className="border-t border-gray-200 my-1"></div>
+                        <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">Admin</div>
                         <Link 
                           to="/admin/dashboard" 
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           onClick={() => setIsUserMenuOpen(false)}
                         >
                           <Cog6ToothIcon className="h-4 w-4 mr-3" />
@@ -135,7 +144,7 @@ const Navbar: React.FC = () => {
                         </Link>
                         <Link 
                           to="/admin/tours" 
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           onClick={() => setIsUserMenuOpen(false)}
                         >
                           <MapPinIcon className="h-4 w-4 mr-3" />
@@ -143,7 +152,7 @@ const Navbar: React.FC = () => {
                         </Link>
                         <Link 
                           to="/admin/bookings" 
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           onClick={() => setIsUserMenuOpen(false)}
                         >
                           <TicketIcon className="h-4 w-4 mr-3" />
@@ -151,18 +160,29 @@ const Navbar: React.FC = () => {
                         </Link>
                         <Link 
                           to="/admin/categories" 
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           onClick={() => setIsUserMenuOpen(false)}
                         >
                           <Cog6ToothIcon className="h-4 w-4 mr-3" />
                           Categories
                         </Link>
+                        <Link 
+                          to="/admin/users" 
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          <UserIcon className="h-4 w-4 mr-3" />
+                          Manage Users
+                        </Link>
                       </>
                     )}
-                    
-                    <div className="border-t border-gray-200 my-2"></div>
+
+                    <div className="border-t border-gray-200 my-1"></div>
                     <button
-                      onClick={handleLogout}
+                      onClick={() => {
+                        handleLogout();
+                        setIsUserMenuOpen(false);
+                      }}
                       className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                     >
                       Sign Out
@@ -205,125 +225,157 @@ const Navbar: React.FC = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200">
-              {/* Main Navigation */}
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`flex items-center px-3 py-2 rounded-lg text-base font-medium ${
-                    isActive(item.path)
-                      ? 'bg-primary-100 text-primary-700'
-                      : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <item.icon className="h-5 w-5 mr-3" />
-                  {item.name}
-                </Link>
-              ))}
-
-              {/* User Section */}
-              {isLoggedIn ? (
-                <>
-                  <div className="border-t border-gray-200 my-2"></div>
-                  
-                  {/* User Info */}
-                  <div className="px-3 py-2">
-                    <div className="text-sm font-medium text-gray-900">{user?.fullName}</div>
-                    <div className="text-xs text-gray-500">{user?.email}</div>
+          <div className="md:hidden fixed inset-0 z-50 bg-black bg-opacity-50" onClick={() => setIsMenuOpen(false)}>
+            <div className="fixed left-0 top-0 h-full w-80 bg-white shadow-xl transform transition-transform duration-300 ease-in-out" onClick={(e) => e.stopPropagation()}>
+              <div className="px-2 pt-2 pb-3 space-y-1">
+                {/* Mobile Menu Header */}
+                <div className="flex items-center justify-between px-3 py-4 border-b border-gray-200">
+                  <div className="flex items-center space-x-2">
+                    <div className="bg-primary-600 p-2 rounded-lg">
+                      <MapPinIcon className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <span className="text-xl font-bold text-gray-900">Smart Tour</span>
+                      <div className="text-xs text-gray-500 -mt-1">Travel Management</div>
+                    </div>
                   </div>
-
-                  {/* Customer Menu */}
-                  <Link 
-                    to="/my-bookings" 
-                    className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <TicketIcon className="h-5 w-5 mr-3" />
-                    My Bookings
-                  </Link>
-
-                  {/* Admin Menu */}
-                  {isAdmin && (
-                    <>
-                      <div className="border-t border-gray-200 my-2"></div>
-                      <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase">Admin</div>
-                      <Link 
-                        to="/admin/dashboard" 
-                        className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <Cog6ToothIcon className="h-5 w-5 mr-3" />
-                        Dashboard
-                      </Link>
-                      <Link 
-                        to="/admin/tours" 
-                        className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <MapPinIcon className="h-5 w-5 mr-3" />
-                        Manage Tours
-                      </Link>
-                      <Link 
-                        to="/admin/bookings" 
-                        className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <TicketIcon className="h-5 w-5 mr-3" />
-                        Manage Bookings
-                      </Link>
-                      <Link 
-                        to="/admin/categories" 
-                        className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <Cog6ToothIcon className="h-5 w-5 mr-3" />
-                        Categories
-                      </Link>
-                    </>
-                  )}
-
-                  <div className="border-t border-gray-200 my-2"></div>
                   <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-3 py-2 rounded-lg text-base font-medium text-red-600 hover:bg-red-50"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="text-gray-400 hover:text-gray-600 p-2"
                   >
-                    Sign Out
+                    <XMarkIcon className="h-6 w-6" />
                   </button>
-                </>
-              ) : (
-                <>
-                  <div className="border-t border-gray-200 my-2"></div>
-                  <Link 
-                    to="/login" 
-                    className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
+                </div>
+
+                {/* Main Navigation */}
+                {navItems.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
                     onClick={() => setIsMenuOpen(false)}
+                    className={`flex items-center px-3 py-2 rounded-lg text-base font-medium ${
+                      isActive(item.path)
+                        ? 'bg-primary-100 text-primary-700'
+                        : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
+                    }`}
                   >
-                    Sign In
+                    <item.icon className="h-5 w-5 mr-3" />
+                    {item.name}
                   </Link>
-                  <Link 
-                    to="/register" 
-                    className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Sign Up
-                  </Link>
-                </>
-              )}
+                ))}
+
+                {/* User Section */}
+                {isLoggedIn ? (
+                  <>
+                    <div className="border-t border-gray-200 my-2"></div>
+                    
+                    {/* User Info */}
+                    <div className="px-3 py-2">
+                      <div className="text-sm font-medium text-gray-900">{user?.fullName}</div>
+                      <div className="text-xs text-gray-500">{user?.email}</div>
+                    </div>
+
+                    {/* Customer Menu */}
+                    <Link 
+                      to="/my-bookings" 
+                      className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <TicketIcon className="h-5 w-5 mr-3" />
+                      My Bookings
+                    </Link>
+                    <Link 
+                      to="/reviews" 
+                      className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <ChatBubbleLeftIcon className="h-5 w-5 mr-3" />
+                      Write Reviews
+                    </Link>
+
+                    {/* Admin Menu */}
+                    {isAdmin && (
+                      <>
+                        <div className="border-t border-gray-200 my-2"></div>
+                        <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase">Admin</div>
+                        <Link 
+                          to="/admin/dashboard" 
+                          className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <Cog6ToothIcon className="h-5 w-5 mr-3" />
+                          Dashboard
+                        </Link>
+                        <Link 
+                          to="/admin/tours" 
+                          className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <MapPinIcon className="h-5 w-5 mr-3" />
+                          Manage Tours
+                        </Link>
+                        <Link 
+                          to="/admin/bookings" 
+                          className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <TicketIcon className="h-5 w-5 mr-3" />
+                          Manage Bookings
+                        </Link>
+                        <Link 
+                          to="/admin/categories" 
+                          className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <Cog6ToothIcon className="h-5 w-5 mr-3" />
+                          Categories
+                        </Link>
+                        <Link 
+                          to="/admin/users" 
+                          className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <UserIcon className="h-5 w-5 mr-3" />
+                          Manage Users
+                        </Link>
+                      </>
+                    )}
+
+                    <div className="border-t border-gray-200 my-2"></div>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setIsMenuOpen(false);
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-lg text-base font-medium text-red-600 hover:bg-red-50"
+                    >
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <div className="border-t border-gray-200 my-2"></div>
+                    <Link 
+                      to="/login" 
+                      className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Sign In
+                    </Link>
+                    <Link 
+                      to="/register" 
+                      className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Sign Up
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         )}
       </div>
-
-      {/* Backdrop for mobile menu */}
-      {isMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-25 z-40 md:hidden"
-          onClick={() => setIsMenuOpen(false)}
-        />
-      )}
 
       {/* Backdrop for user menu */}
       {isUserMenuOpen && (

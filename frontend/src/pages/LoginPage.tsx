@@ -11,17 +11,23 @@ const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginRequest>();
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginRequest>({
+    defaultValues: {
+      username: 'admin',
+      password: '123'
+    }
+  });
 
   const onSubmit = async (data: LoginRequest) => {
     setIsLoading(true);
     try {
       const response = await authAPI.login(data);
-      localStorage.setItem('accessToken', response.accessToken);
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
       toast.success('Login successful!');
       navigate('/dashboard');
     } catch (error: any) {
-      toast.error(error.response?.data || 'Login failed. Please try again.');
+      toast.error(error.message || 'Login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }

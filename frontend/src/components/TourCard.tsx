@@ -6,9 +6,10 @@ import { formatCurrency, formatDate } from '../utils/format';
 
 interface TourCardProps {
   tour: Tour;
+  viewMode?: 'grid' | 'list';
 }
 
-const TourCard: React.FC<TourCardProps> = ({ tour }) => {
+const TourCard: React.FC<TourCardProps> = ({ tour, viewMode = 'grid' }) => {
   const getStatusBadge = (status: string) => {
     const badges: Record<string, { bg: string; text: string }> = {
       AVAILABLE: { bg: 'bg-green-100', text: 'text-green-800' },
@@ -24,6 +25,71 @@ const TourCard: React.FC<TourCardProps> = ({ tour }) => {
     );
   };
 
+  if (viewMode === 'list') {
+    return (
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+        <div className="flex flex-col md:flex-row">
+          {/* Image */}
+          <div className="md:w-80 h-48 md:h-auto">
+            <img
+              src={tour.imageUrl || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800'}
+              alt={tour.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          
+          {/* Content */}
+          <div className="flex-1 p-6">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2 hover:text-primary-600 transition-colors">
+                  <Link to={`/tours/${tour.id}`}>{tour.name}</Link>
+                </h3>
+                <div className="flex items-center text-gray-600 mb-2">
+                  <MapPinIcon className="h-4 w-4 mr-1" />
+                  <span className="text-sm">{tour.destination}</span>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-primary-600 mb-1">
+                  {formatCurrency(tour.price)}
+                </div>
+                <div className="text-sm text-gray-500">per person</div>
+              </div>
+            </div>
+            
+            {tour.description && (
+              <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                {tour.description}
+              </p>
+            )}
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4 text-sm text-gray-600">
+                <div className="flex items-center">
+                  <ClockIcon className="h-4 w-4 mr-1" />
+                  <span>{tour.duration} days</span>
+                </div>
+                <div className="flex items-center">
+                  <UsersIcon className="h-4 w-4 mr-1" />
+                  <span>{tour.availableSeats}/{tour.maxParticipants} seats</span>
+                </div>
+                {getStatusBadge(tour.status)}
+              </div>
+              <Link
+                to={`/tours/${tour.id}`}
+                className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+              >
+                View Details
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Grid view (default)
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-2xl transition-all duration-300">
       {/* Image */}

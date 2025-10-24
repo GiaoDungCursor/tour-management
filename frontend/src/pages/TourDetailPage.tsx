@@ -15,6 +15,7 @@ import { formatCurrency, formatDate } from '../utils/format';
 import ImageGallery from '../components/ImageGallery';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
+import TourMap from '../components/Maps';
 import toast from 'react-hot-toast';
 
 const TourDetailPage: React.FC = () => {
@@ -251,6 +252,15 @@ const TourDetailPage: React.FC = () => {
                 <li>• Please bring valid ID/passport for verification</li>
                 <li>• Tour may be subject to weather conditions</li>
               </ul>
+            </div>
+
+            {/* Tour Map */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                <MapPinIcon className="h-6 w-6 text-primary-600 mr-2" />
+                Tour Location & Map
+              </h3>
+              <TourMap tour={tour} />
             </div>
           </div>
 
